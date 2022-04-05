@@ -1,37 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
-float b;
-
-void
-acha_x(float *b, float *c, int grau, float ini, float ini_der, float x, float *coefs) {
-
-    //size_t n = sizeof(c)/sizeof(c[grau]);
-    /*
-    if (!b)
-      b = (float*)malloc(grau * sizeof(float));
-    if (!c)
-      c = (float*)malloc(grau * sizeof(float));
-    */
+void acha_x(float *v, float *vd, int grau, float ini, float ini_der, float x, float *coefs) {
+   float b, c;
+    
     if(grau > 0) {
-        b[grau-1] = coefs[grau] + ini * x;
-        c[grau-1] = b[grau-1] + ini_der * x;
-
-        printf("b%d -> %f\n", grau, b[grau-1]);        
-    //printf("c%d -> %f\n", grau, c[grau-1]);   
-
-        acha_x(b, c, --grau, b[grau-1], c[grau-1], x, coefs);
         
-    }/* 
-    else {
-        return b;
-    }*/
+        b = coefs[grau-1] + ini * x;
+        c = b + ini_der * x;
+
+        v[grau-1] = b;
+        vd[grau-1] = c;
+
+        printf("b%d -> %f\n", grau-1, b);        
+        printf("c%d -> %f\n", grau-1, c);   
+
+        acha_x(v, vd, grau-1, b, c, x, coefs);
+        
+    }
 }
-
-
-#include <string.h>
 
 int main()
 {
@@ -60,11 +47,14 @@ int main()
         scanf("%f", &coef[i]);
     }
 
-
     acha_x(aux, aux2, grau, coef[grau], coef[grau], x0, coef);
 
-    printf("Resultado: %f", aux[2]);
-    
+    puts("Resultado:");
+    for (int i = 0; i < grau; i++)
+      printf("%f\n", aux[i]);
+    puts("\n");
+    for (int i = 1; i < grau; i++)
+      printf("%f\n", aux2[i]);
 
     return 0;
 }
