@@ -2,77 +2,45 @@
 #include <stdlib.h>
 #include <math.h>
 
-void acha_x(float *v, float *vd, int grau, float ini, float ini_der, float x, float *coefs) {
-   float b, c;
-    
-    if(grau > 0) {
-        
-        b = coefs[grau-1] + ini * x;
-        c = b + ini_der * x;
-
-        v[grau-1] = b;
-        vd[grau-1] = c;
-
-        printf("b%d -> %f\n", grau-1, b);        
-        printf("c%d -> %f\n", grau-1, c);   
-
-        acha_x(v, vd, grau-1, b, c, x, coefs);
-        
-    } 
-}
-
-void formula_newton(float *v, float *vd, int grau, float *coefs, float x0, float fx, float fx_der, float precisao) {
-  float x;
-   
-
-   if(fx > precisao) {
-    x = x0-(fx/fx_der);
-     acha_x(v, vd, grau, x, x, x0, coefs);
-     formula_newton(v, vd, grau, coefs, x, v[0], vd[1], precisao);
-     printf("%f", x);
-   }
-
-   //return x;
-}
-
-int main()
+float Abs(float x);
+			//Metodo de Newton
+int main() //Willian O. de Arruda RA0030481523034
 {
-    int grau=3, i;
-    float x0=0.5, precisao = pow(10, -5);
-    float *coef;
-    float *aux, *aux2;
-    float resultado;
-    
-    
-    //printf("Digite o grau do polinomio: ");
-    //scanf("%d", &grau);
-    
-    coef = (float*)malloc(grau * sizeof(float));
-    aux = (float*)malloc(grau * sizeof(float));
-    aux2 = (float*)malloc(grau * sizeof(float));
-    
-    //printf("Digite o X0: ");
-    //scanf("%f", &x0);
-    
-    // printf("Digite o valor da precisão: ");
-    // scanf("%f", &precisao);
-    
-    for(i = grau; i >= 0; i--) {
-        printf("Digite o valor do coeficiente a%d: ", i);
-        scanf("%f", &coef[i]);
-    }
+    float a, b, c, d; // Variáveis da função
+    float x0 = 0., xn = 0., Fxn = 0., Fdxn = 0., E = 0.; // x inicial e outras variaveis usadas pelo sistema
+    int k = 0; // numero de iterações
 
-    acha_x(aux, aux2, grau, coef[grau], coef[grau], x0, coef);
+    printf("Seja a função no formato: Ax³+Bx²-Cx+D entre com o valor de A:\n");
+    scanf("%f", &a);
+    printf("Seja a função no formato: Ax³+Bx²-Cx+D entre com o valor de B:\n");
+    scanf("%f", &b);
+    printf("Seja a função no formato: Ax³+Bx²-Cx+D entre com o valor de C:\n");
+    scanf("%f", &c);
+    printf("Seja a função no formato: Ax³+Bx²-Cx+D entre com o valor de D:\n");
+    scanf("%f", &d); // receber valores da função
+    printf("Digite o valor de x:"); // recebe valor de x
+    scanf("%f", &xn);
+    printf("Digite o valor da precisão OBS(use . em vez de ,): ");
+    scanf("%f", &E);
 
-    puts("Resultado x1:");
-    // for (int i = 0; i < grau; i++)
-    //   printf("b%d->%f\n",i, aux[i]);
-    // puts("\n");
-    // for (int i = 1; i < grau; i++)
-    //   printf("c%d->%f\n", i, aux2[i]);
-    formula_newton(aux, aux2, grau, coef, x0, aux[0], aux2[1], precisao);
+    do
+        {
+            x0 = xn;
+            Fxn = (a*( x0 * x0 * x0 )) + (b*(x0*x0) - (c*x0) + d); //Calcula a função f(x)
+            Fdxn = ((3*a)*x0*x0)+((2*b)*x0)-c; //Calcula a derivada f'(x)
+            xn = x0 - ( Fxn / Fdxn );
+            k += 1;
+            printf( "\n Iteracao = %d", k ); //exibe a iteração atual
+            printf( "\nx0 = %f\nxn = %f", x0, xn); //exibe os valores de x0 e xn
 
-    //printf("%f", resultado);
+        } while(Abs(xn-x0)>=E||Abs(Fxn)>=E);
 
+    printf("\n\n xn - x0 = %f\n",xn-x0);
+    printf("O resultado final é: %f\n",xn); // x do zero real
     return 0;
 }
+float Abs( float x )
+{
+    x = sqrt(x * x);
+    return x;
+};

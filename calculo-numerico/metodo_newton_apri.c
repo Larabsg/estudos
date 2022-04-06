@@ -1,70 +1,84 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
+void acha_x(float *v, float *vd, int grau, float ini, float ini_der, float x, float *coefs)
+{
+    float b, c;
 
+    if (grau > 0)
+    {
+        b = coefs[grau - 1] + ini * x;
+        c = b + ini_der * x;
 
-float b;
+        v[grau - 1] = b;
+        vd[grau - 1] = c;
 
-void
-acha_x(float *b, float *c, int grau, float ini, float ini_der, float x, float *coefs) {
-
-    //size_t n = sizeof(c)/sizeof(c[grau]);
-    /*
-    if (!b)
-      b = (float*)malloc(grau * sizeof(float));
-    if (!c)
-      c = (float*)malloc(grau * sizeof(float));
-    */
-    if(grau > 0) {
-        b[grau-1] = coefs[grau] + ini * x;
-        c[grau-1] = b[grau-1] + ini_der * x;
-
-        printf("b%d -> %f\n", grau, b[grau-1]);        
-    //printf("c%d -> %f\n", grau, c[grau-1]);   
-
-        acha_x(b, c, --grau, b[grau-1], c[grau-1], x, coefs);
-        
-    }/* 
-    else {
-        return b;
-    }*/
+        acha_x(v, vd, grau - 1, b, c, x, coefs);
+    }
 }
 
-
-#include <string.h>
+float Abs(float x)
+{
+    x = sqrt(x * x);
+    return x;
+}
 
 int main()
 {
-    int grau=3, i;
-    float x0=0.5, precisao;
+    int grau, i, cont = 1;
+    float x0, precisao, fx, fx2, xn;
     float *coef;
     float *aux, *aux2;
-    float resultado;
-    
-    
-    //printf("Digite o grau do polinomio: ");
-    //scanf("%d", &grau);
-    
-    coef = (float*)malloc(grau * sizeof(float));
-    aux = (float*)malloc(grau * sizeof(float));
-    aux2 = (float*)malloc(grau * sizeof(float));
-    
-    //printf("Digite o X0: ");
-    //scanf("%f", &x0);
-    
-    // printf("Digite o valor da precisão: ");
-    // scanf("%f", &precisao);
-    
-    for(i = grau; i >= 0; i--) {
+
+    printf("Digite o grau do polinomio: ");
+    scanf("%d", &grau);
+
+    coef = (float *)malloc(grau * sizeof(float));
+    aux = (float *)malloc(grau * sizeof(float));
+    aux2 = (float *)malloc(grau * sizeof(float));
+
+    printf("Digite o X0: ");
+    scanf("%f", &xn);
+
+    printf("Digite o valor da precisao: ");
+    scanf("%f", &precisao);
+
+    for (i = grau; i >= 0; i--)
+    {
         printf("Digite o valor do coeficiente a%d: ", i);
         scanf("%f", &coef[i]);
     }
 
+    do
+    {
+        printf("_____________________________");
+        printf("\nIteracao = %d\n\n", cont);
 
-    acha_x(aux, aux2, grau, coef[grau], coef[grau], x0, coef);
+        x0 = xn;
+        
+        acha_x(aux, aux2, grau, coef[grau], coef[grau], x0, coef);
 
-    printf("Resultado: %f", aux[2]);
-    
+        for (int i = grau-1; i >= 0; i--)
+            printf("b%d-> %f\n", i, aux[i]);
+        puts("\n");
+        for (int i = grau-1; i >= 1; i--)
+            printf("c%d-> %f\n", i, aux2[i]);
+
+        fx = aux[0];
+        fx2 = aux2[1];
+        xn = x0 - (fx / fx2);
+
+        cont++;
+
+        printf("\nx0 = %f\nxn = %f\n", x0, xn);
+
+    } while (Abs(xn - x0) >= precisao || Abs(fx) >= precisao);
+
+    printf("______________________________\n");
+    printf("\nxn - x0 = %f\n", xn - x0);
+    printf("O resultado final eh: %f\n", xn);
+    printf("______________________________\n");
 
     return 0;
 }
