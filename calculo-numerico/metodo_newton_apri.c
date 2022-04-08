@@ -77,7 +77,8 @@ int main()
 
     printf("______________________________\n");
     printf("\nxn - x0 = %f\n", xn - x0);
-    printf("O resultado final eh: %f\n", xn);
+    printf("Aproximacao de x: %f\n", xn);
+    printf("Quantidade de iteracoes: %d\n", cont-1);
     printf("______________________________\n");
 
     return 0;
